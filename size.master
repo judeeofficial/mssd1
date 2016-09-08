@@ -1,0 +1,65 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="size.master.cs" Inherits="size" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>บริการกำจัดสิ่งปฏิกูล ยินดีต้อนรับ</title>
+ 
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+     <link href="~/css/Site.css" rel="stylesheet" type="text/css" />
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form runat="server">
+    <div class="page">
+        <div class="header">
+            <div class="title">
+                <h1>
+                    บริการกำจัดสิ่งปฏิกูล
+                </h1>
+            </div>
+            <div id="LoginView" runat="server" class="loginDisplay">
+                <span class="loginName">
+                    <asp:HyperLink ID="lnk_LoginName" runat="server" Text="กรุณาเข้าสู่ระบบ" NavigateUrl="~/page/login.aspx" CssClass="loginName"></asp:HyperLink>
+                </span>
+                <%--<asp:LoginView ID="HeadLoginView" runat="server" EnableViewState="True">
+                    <AnonymousTemplate>
+                    </AnonymousTemplate>
+                    <LoggedInTemplate>
+                        <asp:Label ID="Label2" runat="server" Text="Log on as" ForeColor="White"></asp:Label>
+                        <span class="loginName">
+                            <asp:HyperLink ID="lnk_LoginName" runat="server" Text="username" 
+                                CssClass="loginName"></asp:HyperLink>
+                        </span>
+                        <asp:HyperLink ID="lnk_Logout" runat="server" BorderWidth="0px" NavigateUrl="~/Logout.aspx"
+                            BorderStyle="None"><asp:Image ID="Image1" 
+                            runat="server" ImageUrl="~/Images/logout.png" ToolTip="Logout" ImageAlign="Middle" 
+                                BorderStyle="None"/>
+                        </asp:HyperLink>
+                    </LoggedInTemplate>
+                </asp:LoginView>--%>
+                <asp:ImageButton ID="logout" runat="server" ImageUrl="~/Images/logout.png" OnClick="logout_Click" />
+            </div>
+            <div class="clear hideSkiplink">
+                <asp:Menu ID="NavigationMenu" runat="server" CssClass="menu" EnableViewState="false"
+                    IncludeStyleBlock="false" Orientation="Horizontal">
+                    <Items>
+                        <asp:MenuItem NavigateUrl="~/page/Index.aspx" Text="หน้าแรก" />
+                        <asp:MenuItem NavigateUrl="~/page/districttel.aspx" Text="เบอร์โทรติดต่อสำนักงานเขต" />
+                    </Items>
+                </asp:Menu>
+            </div>
+        </div>
+        <div class="main">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+        </div>
+        <div class="clear">
+        </div>
+    </div>
+    <div class="footer">
+    </div>
+    </form>
+</body>
+</html>

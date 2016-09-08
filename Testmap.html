@@ -1,0 +1,44 @@
+﻿<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml">
+<head>
+    <title>Google Maps JavaScript API Example: Simple Directions</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAeNsNnRXUdrpgSw3qfvhz5hRHchrjOSPM-moa2HMmJZw-0fE6VhTsARfVd9x1Dg8TowZALqHIOcO20g"
+            type="text/javascript"></script>
+    <script type="text/javascript">
+
+	// Create a directions object and register a map and DIV to hold the
+    // resulting computed directions
+
+    var map;
+    var directionsPanel;
+    var directions;
+
+    function onGDirectionsLoad() {
+var route = directions.getRoute(0);
+var x = route.getNumSteps();
+var turn = [];
+for(i=0;i<x;i++) {
+var step = route.getStep(i);
+turn[i] = step.getLatLng();
+alert(turn[i]);
+}
+}
+
+    function initialize() {
+      map = new GMap2(document.getElementById("map_canvas"));
+      map.setCenter(new GLatLng(13.998, 100.5009), 15);
+      directionsPanel = document.getElementById("route");
+      directions = new GDirections(map, directionsPanel);
+      directions.load("from: 14.068, 100.6009 to: 13.8152, 100.5606",{locale: 'th'});
+
+      GEvent.addListener(directions, "load", onGDirectionsLoad);
+   }
+    </script>
+</head>
+
+<body onload="initialize()">
+    <div id="map_canvas" style="width: 70%; height: 480px; float:left; border: 1px solid black;"></div>
+    <div id="route" style="width: 25%; height:480px; float:right; border; 1px solid black;"></div>
+    <br />
+</body>
+</html> 

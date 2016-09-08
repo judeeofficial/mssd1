@@ -1,0 +1,455 @@
+﻿<!--
+Pengaplikasian Algoritma Dijkstra di Map
+dijkstra algorith by fnfcreator
+map from maps.google.com
+gui by magrumadha
+-->
+<html>
+<head>
+    <title>Peta Dijkstra Kecamatan Teluk Jambe Barat dan Timur</title>
+</head>
+<body>
+    <p align="center">
+        <font size=4 color="blue">Pemetaan Kantor Desa di Kecamatan Teluk Jambe Barat dan Timur</font>
+    </p>
+    <canvas id="mycanvas" width="1443" height="1482" style="border:8px solid violet;"></canvas>
+    <form>
+        <p align="center">
+            <font>Dari </font>
+            <select name="dari">
+                <option value="0">0 - Karangligar</option>
+                <option value="1">1 - Karangmulya</option>
+                <option value="2">2 - Margakaya</option>
+                <option value="3">3 - Margamulya</option>
+                <option value="4">4 - Mekarmulya</option>
+                <option value="5">5 - Mulyajaya</option>
+                <option value="6">6 - Parungsari</option>
+                <option value="7">7 - Wanajaya</option>
+                <option value="8">8 - Wanakerta</option>
+                <option value="9">9 - Wanasari</option>
+                <option value="10">10 - Pinanyungan</option>
+                <option value="11">11 - Purwadana</option>
+                <option value="12">12 - Puseurjaya</option>
+                <option value="13">13 - Sirnabaya</option>
+                <option value="14">14 - Sukaharja</option>
+                <option value="15">15 - Sukaluyu</option>
+                <option value="16">16 - Sukamakmur</option>
+                <option value="17">17 - Telukjambe</option>
+                <option value="18">18 - Wadas</option>
+            </select>
+            <font>Ke </font>
+            <select name="ke">
+                <option value="0">0 - Karangligar</option>
+                <option value="1">1 - Karangmulya</option>
+                <option value="2">2 - Margakaya</option>
+                <option value="3">3 - Margamulya</option>
+                <option value="4">4 - Mekarmulya</option>
+                <option value="5">5 - Mulyajaya</option>
+                <option value="6">6 - Parungsari</option>
+                <option value="7">7 - Wanajaya</option>
+                <option value="8">8 - Wanakerta</option>
+                <option value="9">9 - Wanasari</option>
+                <option value="10">10 - Pinanyungan</option>
+                <option value="11">11 - Purwadana</option>
+                <option value="12">12 - Puseurjaya</option>
+                <option value="13">13 - Sirnabaya</option>
+                <option value="14">14 - Sukaharja</option>
+                <option value="15">15 - Sukaluyu</option>
+                <option value="16">16 - Sukamakmur</option>
+                <option value="17">17 - Telukjambe</option>
+                <option value="18">18 - Wadas</option>
+            </select>
+        </p>
+        <p align="center">
+            <input type="button" value="Show Shortest Path" onclick='dijkstra(dari.value, ke.value)'>
+            <input type="button" value="Clear Map" onclick='initMap()'>
+            <input type="button" value="Show Desa" onclick='initMap();initDesa();'>
+            <input type="button" value="Show Path" onclick='initMap();initJalan();initDesa();'>
+            <input id="debug" type="checkbox" value="false"> Aktifkan Debug
+
+        </p>
+    </form>
+    <iframe src="JavaScript:'content'" style="border:1px; height:700px; width:1400px; align:center"></iframe>
+    <script type="text/javascript">
+ var canvas = document.getElementById('mycanvas');
+ var ctx = canvas.getContext('2d');
+ NilaiAcuan = 100;
+
+
+ // koordinat desa
+ var desa = new Array();
+ desa[0] = new Array(550,610,"Karangligar");
+ desa[1] = new Array(450,580,"Karangmulya");
+ desa[2] = new Array(680,825,"Margakaya");
+ desa[3] = new Array(560,830,"Margamulya");
+ desa[4] = new Array(390,420,"Mekarmulya");
+ desa[5] = new Array(220,570,"Mulyajaya");
+ desa[6] = new Array(500,400,"Parungsari");
+ desa[7] = new Array(300,1270,"Wanajaya");
+ desa[8] = new Array(100,1130,"Wanakerta");
+ desa[9] = new Array(430,840,"Wanasari");
+ desa[10] = new Array(1138,632,"Pinanyungan");
+ desa[11] = new Array(730,130,"Purwadana");
+ desa[12] = new Array(950,810,"Puseurjaya");
+ desa[13] = new Array(1080,790,"Sirnabaya");
+ desa[14] = new Array(850,430,"Sukaharja");
+ desa[15] = new Array(830,700,"Sukaluyu");
+ desa[16] = new Array(595,290,"Sukamakmur");
+ desa[17] = new Array(1230,490,"Telukjambe");
+ desa[18] = new Array(800,770,"Wadas");
+ var radiusdesa = 10;
+
+ //data matriks jarak
+ var jarak = new Array(18);
+ var x = NilaiAcuan;
+ jarak[0] = new Array(0,0.96,x,2.20,x,x,2.32,x,x,3.53,6.63,7.86,x,x,5.62,3.15,5.33,8.37,x);
+ jarak[1] = new Array(0.96,0,x,3.03,1.88,3.18,x,x,x,3.32,x,x,x,x,x,x,x,x,x);
+ jarak[2] = new Array(x,x,0,1.14,x,x,x,x,x,x,x,x,2.50,x,x,x,x,x,1.74);
+ jarak[3] = new Array(2.20,3.03,1.14,0,x,x,x,x,x,1.46,x,x,x,x,x,x,x,x,x);
+ jarak[4] = new Array(x,1.88,x,x,0,4.11,2.64,x,x,x,x,x,x,x,x,x,4.13,x,x);
+ jarak[5] = new Array(x,3.18,x,x,4.11,0,x,8.54,9.02,4.26,x,x,x,x,x,x,x,x,x);
+ jarak[6] = new Array(2.32,x,x,x,2.64,x,0,x,x,x,x,7.14,x,x,3.31,x,1.91,x,x);
+ jarak[7] = new Array(x,x,x,x,x,8.54,x,0,2.62,6.02,x,x,x,x,x,x,x,x,x);
+ jarak[8] = new Array(x,x,x,x,x,9.02,x,2.62,0,5.17,x,x,x,x,x,x,x,x,x);
+ jarak[9] = new Array(3.53,3.32,x,1.46,x,4.53,x,6.02,5.17,0,x,x,x,x,x,x,x,x,x);
+ jarak[10] = new Array(6.63,x,x,x,x,x,x,x,x,x,0,x,2.91,3.32,x,3.97,x,3.22,4.17);
+ jarak[11] = new Array(7.86,x,x,x,x,x,7.14,x,x,x,x,0,x,x,3.78,x,5.08,x,x);
+ jarak[12] = new Array(x,x,2.50,x,x,x,x,x,x,x,2.91,x,0,1.41,x,x,x,x,2.22);
+ jarak[13] = new Array(x,x,x,x,x,x,x,x,x,x,3.32,x,1.41,0,x,x,x,4.58,4.04);
+ jarak[14] = new Array(5.62,x,x,x,x,x,3.31,x,x,x,x,3.78,x,x,0,x,3.38,5.33,x);
+ jarak[15] = new Array(3.15,x,x,x,x,x,x,x,x,x,3.97,x,x,x,x,0,x,5.70,0.94);
+ jarak[16] = new Array(5.33,x,x,x,4.13,x,1.91,x,x,x,x,5.08,x,x,3.38,x,0,x,x);
+ jarak[17] = new Array(x,x,x,x,x,x,x,x,x,x,3.22,x,x,4.58,5.33,5.70,x,0,x);
+ jarak[18] = new Array(x,x,1.72,x,x,x,x,x,x,x,4.17,x,2.22,4.04,x,0.94,x,x,0);
+
+ //data garis jalan antar desa
+ var garis = new Array();
+ for (var i=0; i<desa.length; i++)
+  garis[i] = new Array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+ garis[0][1] = new Array(542,620,520,605,490,605);
+ garis[0][3] = new Array(542,620,545,625,533,670,545,725,528,787,530,797,550,830);
+ garis[0][6] = new Array(537,552,541,514,533,491,535,447,527,446,521,424,501,419);
+ garis[0][9] = new Array(542,620,545,625,533,670,545,725,528,787,530,797,535,806,530,817,531,838,524,845,502,834,496,825,437,820,426,825);
+ garis[0][10]= new Array(569,620,605,621,616,615,639,616,695,633,757,657,772,653,783,662,810,664,825,671,840,669,869,647,874,618,891,617,904,599,937,575,944,576,961,555,1028,590,1025,626,1041,639,1100,628);
+ garis[0][11]= new Array(537,552,541,514,533,491,535,447,544,443,577,447,615,443,671,450,697,450,713,401,719,389,771,385,777,389,796,387,797,382,805,371,767,338,772,325,772,312,778,308,813,302,810,289,816,272,801,269,762,221,773,204,775,188,786,153);
+ garis[0][14]= new Array(537,552,541,514,533,491,535,447,544,443,577,447,615,443,671,450,697,450,713,401,719,389,771,385,777,389,796,387,797,382,805,371,833,393,819,419,837,432);
+ garis[0][15]= new Array(569,620,605,621,616,615,639,616,695,633,757,657,772,653,783,662,810,664,825,671,840,669,832,682);
+ garis[0][17]= new Array(569,620,605,621,616,615,639,616,695,633,757,657,772,653,783,662,810,664,825,671,840,669,869,647,874,618,891,617,904,599,937,575,944,576,978,537,1014,519,1003,474,1154,454,1173,455,1255,483,1248,488);
+ garis[0][16]= new Array(537,552,541,514,533,491,535,447,544,443,577,447,615,443,671,450,697,450,720,390,659,335);
+ garis[1][3] = new Array(490,605,520,605,542,620,545,625,533,670,545,725,528,787,530,797,550,830);
+ garis[1][4] = new Array(443,567,431,561,410,558,405,420);
+ garis[1][5] = new Array(443,567,431,561,366,549,351,540,351,529,303,510,302,501,283,495,282,489,265,487,261,484,238,483,236,486,238,507,228,548,222,548,220,553,216,555);
+ garis[1][9] = new Array(490,605,505,606,500,642,487,650,479,743,475,759,481,795,480,821,437,819,425,825);
+ garis[2][3] = new Array(670,832,626,834);
+ garis[2][12]= new Array(693,832,745,832,775,838,779,844,817,849,903,819);
+ garis[2][18]= new Array(693,832,745,832,775,838,779,844,802,789,813,779);
+ garis[3][9] = new Array(548,834,538,836,524,845,502,833,497,826,480,821,439,819,425,825);
+ garis[4][5] = new Array(405,420,410,558,366,549,351,540,351,529,303,510,302,501,283,495,282,489,265,487,261,484,238,483,236,486,238,507,228,548,222,548,220,553,216,555);
+ garis[4][6] = new Array(447,421,448,365,501,359);
+ garis[4][16]= new Array(447,421,448,365,501,359,500,306,560,310);
+ garis[5][7] = new Array(211,578,201,610,185,620,168,649,159,686,232,764,229,795,233,806,353,845,376,846,362,856,356,897,343,919,328,925,306,980,287,1065,238,1084,209,1105,185,1225,250,1240,266,1259,280,1262);
+ garis[5][8] = new Array(211,578,201,610,185,620,168,649,159,686,232,764,229,795,233,806,353,845,376,846,362,856,356,897,343,919,328,925,306,980,287,1065,238,1084,209,1105,193,1175,165,1173,162,1165);
+ garis[5][9] = new Array(211,578,201,610,185,620,168,649,159,686,232,764,229,795,233,806,353,845,376,846);
+ garis[6][11]= new Array(501,419,521,424,527,446,535,447,544,443,577,447,615,443,671,450,697,450,713,401,719,389,771,385,777,389,796,387,797,382,805,371,805,371,766,336,772,325,772,312,778,308,813,302,810,289,816,272,801,269,762,221,773,204,775,188,786,153);
+ garis[6][14]= new Array(501,419,521,424,527,446,535,447,544,443,577,447,615,443,671,450,697,450,713,401,719,389,771,385,777,389,796,387,797,382,805,371,833,393,819,419,837,432);
+ garis[6][16]= new Array(500,306,560,310);
+ garis[7][8] = new Array(288,1270,277,1260,264,1258,251,1240,185,1224,187,1200,193,1175,165,1172,161,1164);
+ garis[7][9] = new Array(288,1270,277,1260,264,1258,251,1240,185,1224,208,1107,240,1082,284,1064,308,975,329,924,343,912,355,896,363,856,376,844);
+ garis[8][9] = new Array(163,1165,166,1173,194,1175,208,1107,240,1082,284,1064,308,975,329,924,343,912,355,896,363,856,376,844);
+ garis[10][12] = new Array(1101,628,1040,641,1034,676,1036,669,1033,711,1027,718,1022,738,1023,747,1013,774,1009,773,961,786);
+ garis[10][13] = new Array(1101,628,1040,641,1034,676,1036,669,1033,711,1027,718,1022,738,1023,747,1013,774,1045,791);
+ garis[10][15] = new Array(1101,628,1040,641,1024,627,1026,591,963,555,904,599,891,617,874,618,869,647,840,669,825,671,832,682);
+ garis[10][17] = new Array(1171,639,1212,683,1227,661,1240,607,1253,566,1278,524,1235,500);
+ garis[10][18] = new Array(1101,628,1040,641,1034,676,1035,696,1014,688,981,692,955,700,927,700,914,707,845,792,814,777);
+ garis[11][14] = new Array(786,153,775,188,773,204,762,221,801,269,816,272,810,289,813,302,778,308,772,312,772,325,766,336,805,371,833,393,819,419,837,432);
+ garis[11][16] = new Array(786,153,775,188,773,204,762,221,801,269,816,272,810,289,813,302,778,308,772,312,772,325,766,336,806,372,797,383,778,389,772,385,719,389,663,336);
+ garis[12][13] = new Array(961,786,1010,772,1045,791);
+ garis[12][18] = new Array(817,849,781,842,804,787,814,778);
+ garis[13][17] = new Array(1179,803,1210,799,1227,754,1212,683,1227,661,1240,607,1253,566,1278,524,1235,500);
+ garis[13][18] = new Array(1046,793,1015,774,1024,746,1021,739,1026,719,1039,700,1014,688,981,692,955,700,927,700,914,707,845,792,814,777);
+ garis[14][16] = new Array(836,433,814,416,830,390,805,373,797,381,798,389,778,389,770,384,720,389,655,333);
+ garis[14][17] = new Array(939,439,931,401,933,362,928,341,970,333,1006,304,1020,304,1143,399,1154,454,1173,455,1255,483,1248,488)
+ garis[15][17] = new Array(832,682,825,671,840,669,869,647,874,618,891,617,904,599,937,575,944,576,978,537,1014,519,1003,474,1154,454,1173,455,1255,483,1248,488);
+ garis[15][18] = new Array(828,725,818,735,818,777);
+
+ //membuat titik kantor desa
+ function drawDesa(x,y, radius, warnaIsi, warnaLingkar, warnaBayang, lebarBayang, huruf, warnaHuruf,Keterangan)
+ {
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
+  ctx.fillStyle = warnaIsi;
+  ctx.shadowColor=warnaBayang;
+  ctx.shadowBlur=lebarBayang;
+  ctx.fill();
+  ctx.strokeStyle = warnaLingkar;
+  ctx.stroke();
+  ctx.font="10px Calibri";
+  ctx.fillStyle = warnaHuruf;
+  ctx.fillText(huruf,x - (radius /2) ,y + (radius/2));
+  ctx.font="12px Tahoma";
+  ctx.fillStyle = warnaHuruf;
+  ctx.fillText(Keterangan,x + (radius) + 4,y + (radius/2));
+ }
+
+ //membuat garis antar desa
+ function drawGaris(awal,akhir,color)
+ {
+  ctx.beginPath();
+  if (akhir < awal)
+  {
+   var temp = akhir;
+   akhir = awal;
+   awal = temp;
+  }
+  ctx.moveTo(desa[awal][0],desa[awal][1]);
+  for(var i=0; i <= (garis[awal][akhir].length); i+=2)
+  {
+   ctx.lineTo(garis[awal][akhir][i],garis[awal][akhir][i+1]);
+
+  }
+
+  ctx.lineTo(desa[akhir][0],desa[akhir][1]);
+
+  ctx.strokeStyle = color;
+  ctx.stroke();
+ }
+
+ //Inisialisasi Peta
+ function initDesa()
+ {
+  ctx.lineWidth =
+  1;
+  for(var i=0; i<(desa.length); i++)
+  {
+   drawDesa(desa[i][0],desa[i][1],radiusdesa, "White", "Red","Blue",10,i,"Blue",desa[i][2]);
+  }
+
+ }
+
+ function initJalan()
+ {
+  ctx.lineWidth = 2;
+  for(var i=0; i<(desa.length); i++)
+  {
+   for(var j=0; j<(desa.length); j++)
+   {
+    if (garis[i][j] != 0)
+    {
+     drawGaris(i,j,"green");
+    }
+   }
+  }
+ }
+
+ function initMap()
+ {
+  ctx.drawImage(img,0,0);
+ }
+
+ //Load image untuk peta
+ var img=new Image();
+ img.onload = function()
+ {
+
+  initMap();
+  initJalan();
+  initDesa();
+
+ };
+ img.src="2.jpg";
+
+
+ /*
+ //koordinat mouse di canvas
+ canvas.addEventListener('mousedown', function(evt){
+        var mousePos = getMousePos(canvas, evt);
+        var message = "Mouse position: " + mousePos.x + "," + mousePos.y;
+        writeMessage(canvas, message);
+    }, false);
+
+ function writeMessage(canvas, message)
+ {
+  var context = canvas.getContext('2d');
+  context.clearRect(600, 600, 400, 50);
+  context.font = '18pt Calibri';
+  context.fillStyle = 'black';
+  context.fillText(message, 620, 630);
+ }
+
+ function getMousePos(canvas, evt)
+ {
+  // get canvas position
+  var obj = canvas;
+  var top = 0;
+  var left = 0;
+  while (obj && obj.tagName != 'BODY')
+  {
+   top += obj.offsetTop;
+   left += obj.offsetLeft;
+   obj = obj.offsetParent;
+  }
+
+  // return relative mouse position
+  var mouseX = evt.clientX - left + window.pageXOffset;
+  var mouseY = evt.clientY - top + window.pageYOffset;
+  return {
+        x: mouseX,
+        y: mouseY
+  }
+ }
+ */
+
+
+ // ambil data dari matriks jarak
+ function bobot(a,b)
+ {
+  return jarak[a][b];
+ }
+
+ function dijkstra(Awal,Akhir)
+ {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  initMap();
+  initJalan();
+  initDesa();
+  Awal = parseInt(Awal);
+  Akhir = parseInt(Akhir);
+  JumlahVerteks = jarak.length;
+  var Posisi= new Array(JumlahVerteks);
+  var Kunjungan = new Array(JumlahVerteks);
+  var Sebelum= new Array(JumlahVerteks);
+  var TakTerdefinisi = -1;
+  var i;
+  var Verteks;
+  var Berhenti;
+  var iframe = document.getElementsByTagName('iframe')[0];
+  var debug1 = document.getElementById('debug').checked;
+  var doc = iframe.contentWindow.document;
+  doc.body.innerHTML = "";
+
+  //inisialisasi array;
+  for(i=0; i<JumlahVerteks; i++)
+  {
+   Posisi[i]= NilaiAcuan; //nilai acuan = 10000;
+   Sebelum[i]= TakTerdefinisi; //tak terdefinisi = -1;
+   Kunjungan[i]= false;
+
+  }
+
+  Posisi[Awal]=0;
+
+  for (Verteks =0; Verteks < JumlahVerteks; Verteks++)
+  {
+   var JarakTerpendek = NilaiAcuan;
+   Berhenti = -1;
+   for (i=0; i < JumlahVerteks; i++)
+   {
+    if (!Kunjungan[i])
+    {
+     if (Posisi[i] <= JarakTerpendek)
+     {
+      JarakTerpendek = Posisi[i];
+      Berhenti = i;
+     }
+    }
+   }
+   Kunjungan[Berhenti] = true;
+   for (i=0; i < JumlahVerteks; i++)
+   {
+    if (!Kunjungan[i])
+    {
+     var w = bobot(Berhenti, i);
+     if (Posisi[Berhenti]+w < Posisi[i])
+     {
+      Posisi[i] = Posisi[Berhenti] + w;
+      Sebelum[i] = Berhenti;
+     }
+    }
+   }
+
+
+
+   //for debugging dijkstra
+
+   if (debug1)
+   {
+
+    doc.write("Iterasi ke " + Verteks);
+    var n;
+    n =Posisi.length;
+    doc.write("<table border=1 align=center><tr>");
+    for (i=0; i<n; i++)
+    {
+     doc.write("<th style='width: 60px;'>" + i +"</th>");
+    }
+    doc.write("</tr><tr>");
+    var fixnum;
+    for (i=0; i<n; i++)
+    {
+     fixnum = Posisi[i].toFixed(2);
+     doc.write("<td style='width: 60px;'>" + fixnum +"</td>");
+    }
+    doc.write("</tr><tr>");
+    for (i=0; i<n; i++)
+    {
+     doc.write("<td style='width: 60px;'>" + Sebelum[i] +"</td>");
+    }
+    doc.write("</tr><tr>");
+    for (i=0; i<n; i++)
+    {
+     doc.write("<td style='width: 60px;'>" + Kunjungan[i] +"</td>");
+    }
+    doc.write("</tr></table>");
+    doc.write("<br>");
+   }
+
+  }
+
+  i=Akhir;
+
+  if (Posisi[i] < NilaiAcuan)
+  {
+   var Lintasan = desa[i][2];
+   var Verteks = i;
+   var Asal = i;
+   ctx.lineWidth = 4;
+   doc.write("<table border=1 align=center>");
+   doc.write("<th>No</th> <th>Dari</th>");
+   doc.write("<th>Ke</th><th>Jarak</th> <br> ");
+   while (Verteks>=0)
+   {
+     p=
+    Verteks = Sebelum[Verteks];
+    if (Verteks>=0)
+    {
+     Lintasan = desa[Verteks][2] + '->' + Lintasan;
+     drawGaris(Verteks,Asal,"Red");
+     doc.write("<tr>");
+     doc.write("<td>" + Verteks + "</td>");
+     doc.write("<td>" + desa[Asal][2] + "</td>");
+     doc.write("<td>" + desa[Verteks][2] + "</td>");
+     doc.write("<td>" + jarak[Asal][Verteks] + " km </td>");
+     doc.write("</tr>");
+     Asal = Verteks;
+
+    }
+
+
+   }
+   initDesa();
+
+   alert("Jarak :" + Posisi[i]+' km ('+Lintasan+')');
+   doc.write("<td colspan=3 rowspan=1>Jarak Total "+ Lintasan + " </td>");
+   doc.write("<td>" + Posisi[i] + "  km </td>");
+   doc.write("</table>");
+
+  }else
+  {
+   alert("Tidak ada Jalur")
+  }
+ }
+
+
+    </script>
+</body>
+</html>

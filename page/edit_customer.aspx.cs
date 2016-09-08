@@ -47,6 +47,8 @@ public partial class page_edit_customer : System.Web.UI.Page
     {
    try
         {
+
+            //เริ่มอัพเดตข้อมูล
         String firstname = txt_firstname.Text;
         String lastname = txt_lastname.Text;
         String address = txt_address.Text;
